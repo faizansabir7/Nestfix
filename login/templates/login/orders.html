@@ -1,0 +1,147 @@
+{% extends "login/layout.html" %}
+
+{% block body %}
+
+<style>
+    .booking {
+        padding: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .booking-card:hover {
+        background-color: rgb(200, 204, 205);
+    }
+
+    /* styles.css */
+    .booking-card {
+        display: inline-block;
+        width: 300px;
+        margin: 10px;
+        padding: 20px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .booking-card h3 {
+        margin-top: 0;
+    }
+</style>
+
+{% if not sp %}
+
+
+
+<!-- Add this link to the head of your HTML file to include Bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+
+
+<h2 style="font-size: 24px; margin: 50px;" class="text-center text-success font-italic">Completed Orders</h2>
+<table class="table table-striped table-bordered table-hover">
+    {% if complete_orders %}
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Service Provider</th>
+       
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for order in complete_orders %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ order.datetime.date }}</td>
+                <td>{{ order.sp}}
+                    <a style="float: right;" href="{% url 'comment' bid=order.id %}" >Please Give Your Feedback</a></td>
+            </tr>
+            
+            
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="3" class="text-secondary" style="text-align:center;  ">No Completed Orders for this User</td>
+        </tr>    
+    {% endif %}
+    </tbody>
+</table>
+
+<h2 style="font-size: 24px; margin: 60px;" class="text-center  text-danger font-italic">Pending Orders</h2>
+<table class="table table-striped table-bordered table-hover">
+    {% if pending_orders %}
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Service Provider</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in pending_orders %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ order.datetime.date }}</td>
+                <td>{{ order.sp}}
+                    <a class="text-danger" style="float: right;" href="{% url 'comment' bid=order.id %}?link=5" >Cancel Booking</a>
+
+                
+            </td>
+
+            </tr>
+            {% empty %}
+            
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="3" class="text-secondary" style="text-align:center;  ">No Pending Orders for this User</td>
+        </tr>    
+    {% endif %}
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+{% else %}
+
+
+
+<!-- bookings_list.html -->
+<ul>
+    <!-- bookings_list.html -->
+
+    {% for booking in orders %}
+    <div class="booking-card">
+        <h3>{{ booking.user.username }}</h3>
+        <p>Date Of Booking: {{ booking.datetime.date}}</p>
+        <p>Time Of Booking: {{ booking.datetime.time}}</p>
+        <p>Contact: {{ booking.user.phno}}</p>
+        <p>Place: {{ booking.city}},{{booking.district }}</p>
+
+
+        <form action="{% url 'orders' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="hidden-field" value={{booking.id}}>
+
+            <button type="submit" class="btn btn-primary">Mark as Completed</button>
+        </form>
+
+        <!-- Add more fields as desired -->
+    </div>
+    {% empty %}
+    <div class="text-center">
+    <td colspan="3" class="text-secondary"  ">No Pending Orders for this Service Provider</td>
+    </div>
+    {% endfor %}
+
+</ul>
+
+{% endif %}
+
+{% endblock %}

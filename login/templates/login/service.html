@@ -1,0 +1,172 @@
+{% extends "login/layout.html" %}
+
+{% block body %}
+<style>
+    .service-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .service-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .service-table td:first-child {
+        font-weight: bold;
+    }
+
+
+    .service-table tbody tr:hover {
+        background-color: #e9e9e9;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function getsp(username) {
+        console.log(username);
+        var url='/getsp/'+username;
+        window.location.href = url;
+    }
+    $(document).ready(function () {
+        var citiesByState = {
+            "Kannur": ["Payyanur", "Taliparamba", "Kannur","Thalassery"],
+            "Eranakulam": ["Kochi", "Aluva", "Edappally"],
+            "Kozhikode": ["Balussery", "Ramanattukara", "Kunnamangalam"]
+        };
+        $("#district").change(function () {
+            var selectedState = $(this).val();
+            if (selectedState) {
+                var cities = citiesByState[selectedState] || [];
+                var options = cities.map(function (city) {
+                    return "<option value='" + city + "'>" + city + "</option>";
+                });
+                options.unshift("<option value='' selected disabled>Select a city</option>");
+                $("#city").html(options.join("")).prop("disabled", false);
+            } else {
+                $("#city").html("<option value='' selected disabled>Select a state first</option>").prop("disabled", true);
+            }
+        });
+        // to disable submit button before selecting address
+        const selectElements = document.querySelectorAll('.address');
+        const submitButton = document.getElementById('submitButton');
+
+        selectElements.forEach(selectElement => {
+            selectElement.addEventListener('change', function () {
+                const allOptionsSelected = Array.from(selectElements).every(select => select.value !== '');
+                submitButton.disabled = !allOptionsSelected;
+            });
+        });
+
+
+
+
+
+
+
+
+
+    });
+
+
+
+</script>
+
+
+<div style="text-align: center;">
+    <p style="display: block;"><img src="{{item.icon}} " width="300px" alt="No Image"></p>
+
+    <!-- <div class="service">
+        <h2>Service:{{ item.name }}</h2>
+        <p style="font-weight: bold;">Visit Charge: {{ item.price }}</p>
+        <p>(Note: Price is not fixed. It will vary depending on type of service)</p>
+        <p class="desc"><span style="font-weight: bold;">Description:</span>{{ item.desc }}</p>
+      </div> -->
+    <table class="service-table">
+        <tbody>
+            <tr>
+                <td>Service:</td>
+                <td>{{ item.name }}</td>
+            </tr>
+            <tr>
+                <td>Price:</td>
+                <td>{{ item.price }}</td>
+            </tr>
+            <tr>
+                <td>Description:</td>
+                <td>{{ item.desc }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="note">Note: Price is not fixed. It will vary depending on the type of service.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <form action="{% url 'service' item.id %}" method="POST">
+        {% csrf_token %}
+
+        {% if my_list %}
+        <h3  style="margin: 50px; font-family: 'Trebuchet MS',  sans-serif ;">List of Service Providers Sorted by Nearest Distance</h3>
+
+        {% endif %}
+        {% if my_list %}
+        <table class="service-table">
+            <thead>
+                
+                    <tr style="border-bottom: 2px solid rgb(201, 196, 196); ">
+                        <th>Name</th>
+                        <th>District</th>
+                        <th>City</th>
+                        <th>Telephone</th>
+                    </tr>
+                
+            </thead>
+        {% endif %}
+
+
+            {% for i in my_list %}
+            {% if i.service == item and i.user.is_active %}
+            <tr onclick="getsp('{{i.user.username}}')">
+
+                <td>{{ i.user.username }}</td>
+                <td>{{ i.district }}</td>
+                <td>{{ i.city }}</td>
+                <td>{{ i.user.phno }}</td>
+            </tr>
+            {% endif %}
+            {% empty %}
+            <div>
+                <select name="district" id="district" class="address">
+                    <option disabled selected value="">Choose Your District</option>
+                    <option value="Kannur">Kannur</option>
+                    <option value="Eranakulam">Eranakulam</option>
+                    <option value="Kozhikode">Kozhikode</option>
+                </select>
+
+
+                <select name="city" id="city" class="address">
+                    <option disabled selected value="">Choose Your City</option>
+
+                </select>
+            </div>
+            <div style="margin: 50px;" id="contentDiv">
+                <button disabled id="submitButton" class="btn btn-primary">Search For Service Providers</button>
+            </div>
+            {% endfor %}
+
+
+
+
+        </table>
+
+
+
+
+    </form>
+
+
+</div>
+
+{% endblock %}

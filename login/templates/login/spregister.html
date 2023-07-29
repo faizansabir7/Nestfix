@@ -1,0 +1,144 @@
+{% extends "login/layout.html" %}
+
+{% block body %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var citiesByState = {
+            "Kannur": ["Payyanur", "Taliparamba", "Kannur","Thalassery"],
+            "Eranakulam": ["Kochi", "Aluva", "Edappally"],
+            "Kozhikode": ["Balussery", "Ramanattukara", "Kunnamangalam"]
+        };
+        $("#district").change(function () {
+            var selectedState = $(this).val();
+            if (selectedState) {
+                var cities = citiesByState[selectedState] || [];
+                var options = cities.map(function (city) {
+                    return "<option value='" + city + "'>" + city + "</option>";
+                });
+                options.unshift("<option value='' selected disabled>Select a city</option>");
+                $("#city").html(options.join("")).prop("disabled", false);
+            } else {
+                $("#city").html("<option value='' selected disabled>Select a state first</option>").prop("disabled", true);
+            }
+        });
+    });
+</script>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background: white;
+    }
+
+    .box {
+        position: absolute;
+        margin-top: 60px;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    h2 {
+        color: black;
+        text-transform: uppercase;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    input[type="text"],input[type="email"],input[type="tel"],
+    input[type="password"] {
+        border: 0;
+        background: none;
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+        border: 2px solid #3498db;
+        padding: 14px 10px;
+        width: 200px;
+        outline: none;
+
+        border-radius: 24px;
+        transition: 0.25s;
+    }
+
+    input[type="text"]:focus,input[type="tel"]:focus,
+    input[type="password"]:focus,input[type="email"]:focus {
+        width: 400px;
+        border-color: #2ecc71;
+    }
+
+    input[type="submit"] {
+        text-align: center;
+
+    }
+
+    input[type="submit"]:hover {
+        background: #2ecc71;
+    }
+</style>
+
+<div class="box">
+    <h2><ion-icon name="person-add-outline"></ion-icon> Register</h2><div class="text-info">Service Provider</div>
+    {% if message %}
+    <div style="text-align: center; color: red;">{{ message }}</div>
+    {% endif %}
+
+    <form action="{% url 'spregister' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="username" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="email" name="email" placeholder="Email Address" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="tel" name="tel" placeholder="Phone Number" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="Password" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password" required>
+        </div>
+
+        <div class="form-group">
+            <label >
+               Please Upload  Cerificates in PDF format(Max Size:2.5MB)
+            </label>
+            <input class="form-control"  type="file" accept="application/pdf" name="ccc" placeholder="Upload Certificate" required>
+        </div>
+        <div>
+            <select name="district" id="district">
+                <option disabled selected value="">Choose District</option>
+                <option value="Kannur">Kannur</option>
+                <option value="Eranakulam">Eranakulam</option>
+                <option value="Kozhikode">Kozhikode</option>
+            </select>
+
+        
+            <select name="city" id="city">
+                <option disabled selected value="">Choose a City</option>
+            </select>
+
+            <select name="service" id="service">
+                <option disabled selected value="">Choose Service</option>
+                {% for category in services %}
+                <option value="{{category.id}}">{{category.name}}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+        <div style="margin: 50px;">
+            <input class="btn btn-primary" type="submit" value="Register">
+        </div>
+    </form>
+
+    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+
+</div>
+
+{% endblock %}

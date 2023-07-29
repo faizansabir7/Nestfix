@@ -1,0 +1,129 @@
+{% extends "login/layout.html" %}
+
+{% block body %}
+
+{% load my_filters %}
+
+<style>
+    .service-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .service-table th {
+        background-color: #3498db;
+        color: white;
+        padding: 10px;
+    }
+
+    .service-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .service-table td:first-child {
+        font-weight: bold;
+    }
+
+    .service-table tbody tr:hover {
+        background-color: #e9e9e9;
+    }
+
+    h3 {
+        font-size: large;
+    }
+
+    .success-message {
+        color: green;
+        font-weight: bold;
+    }
+
+    .warning-message {
+        color: red;
+        font-weight: bold;
+    }
+
+    .messages-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .rating {
+        list-style: none;
+        padding: 0;
+    }
+
+    .rating li {
+        display: inline-block;
+        font-size: 20px;
+        color: #ffcc00;
+    }
+</style>
+
+<table class="service-table">
+    {% if comments %}
+    <th colspan="3" style="text-align:center; margin-bottom: 40px; color: black;background-color: #ddd;">{{item}}</th>
+    <tr>
+        <th>User</th>
+        <th>Rating(Out of 5)</th>
+        <th>Comments</th>
+    </tr>
+    {% for comment in comments %}
+    <tr>
+        <td>{{comment.user.username}}</td>
+        <td>
+            <ul class="rating">
+                {% for i in "x"|ljust:comment.rate %}
+                <li>★</li>
+                {% endfor %}
+                {% for i in comment.rate|to_five %}
+               
+                <li>☆</li>
+              
+                {% endfor %}
+                
+              
+
+            </ul>
+        </td>
+
+        <td>{{comment.comment}}</td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr>
+        <td colspan="3" style="text-align:center;">No comments for this Service Provider</td>
+    </tr>
+    {% endif %}
+</table>
+
+<div class="messages-container">
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+    <div class="warning-message">{{ message }}</div>
+    {% else %}
+    <div class="success-message">{{ message }}</div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+</div>
+<form action="{% url 'getsp' item.user.username  %}" method="POST">
+    {% csrf_token %}
+    <div style="text-align: center;">
+        {% if not user.is_service_provider %}
+        {% if not form_submitted %}
+        <button id='book-now-button' class="btn btn-primary">Book Now</button>
+        {% endif %}
+        {% endif %}
+
+    </div>
+</form>
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "login/layout.html" %}
+
+{% block body %}
+
+
+{% if message %}
+<h3 style="margin: 60px;" class="text-center text-success">
+    {{message}}!
+</h3>
+
+{% else %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<h2>Feedback Form</h2>
+<style>
+    .fa{
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .fa-star {
+        color: gray;
+    }
+
+    .checked {
+        color: orange;
+    }
+</style>
+
+
+<form method="POST" action="{% url 'comment' bid %}">
+
+    {% csrf_token %}
+    <input type="hidden" id="rating" name="rating" value="0">
+
+    <div class="form-group">
+        
+        <label for="rating">Star Rating:</label>
+        <div class="star-rating">
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="comment">Comment:</label>
+        <textarea id="comment" name="comment" class="form-control" rows="5"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script>
+    const stars = document.querySelectorAll('.fa-star');
+
+    // Add an event listener to each star
+    stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+            // Update the value of the hidden input field
+            document.querySelector('#rating').value = index + 1;
+
+            // Update the display of the stars
+            stars.forEach((star, i) => {
+                if (i <= index) {
+                    star.classList.add('checked');
+                } else {
+                    star.classList.remove('checked');
+                }
+            });
+        });
+    });
+</script>
+{% endif %}
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "login/layout.html" %}
+
+{% block body %}
+
+<style>
+    /* button{
+        background-color: #4284f3;
+        color: white;
+        margin: 20px;
+        width:150px;
+       
+        
+        
+    } */
+    button{
+        border: 0;
+        background-color: #4284f3;
+        color: white;
+        margin: 20px 30px;
+        
+        border: 2px solid #3498db;
+        padding: 14px 10px;
+        width: 200px;
+        outline: none;
+        
+        border-radius: 24px;
+        transition: 0.25s;
+}
+button:hover{
+    background-color: rgba(0, 0, 139, 0.796); /* Green */
+    color: white;
+}
+
+</style>
+{% if user.is_authenticated %}
+{% for category in services %}
+<form style="display: inline;" action="{% url 'service' category.id %}" method="POST">
+    {% csrf_token %}
+        <button  name="id" value={{category.id}} >{{category.name}} </option>
+</form>
+{% endfor %}
+{% endif %}
+
+
+
+{% endblock %}
