@@ -2,22 +2,64 @@
 
 {% block body %}
 
-
-{% if message %}
-<h3 style="margin: 60px;" class="text-center text-success">
-    {{message}}!
-</h3>
-
-{% else %}
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<h2>Feedback Form</h2>
 <style>
-    .fa{
+    /* Add your custom styles here */
+ 
+    .background-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://plus.unsplash.com/premium_photo-1682310144714-cb77b1e6d64a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2412&q=80');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.3;
+        z-index: 1;
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+        font-weight: bold;
+    }
+    h2 {
+        text-align: center;
+        margin-top: 40px;
+        color: #333;
+    }
+
+    .form-container {
+        max-width: 500px;
+        max-height: 700px;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .star-rating {
+        display: flex;
+    }
+
+    .fa {
         font-size: 24px;
         cursor: pointer;
+        transition: color 0.3s;
     }
+
     .fa-star {
         color: gray;
     }
@@ -25,60 +67,80 @@
     .checked {
         color: orange;
     }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+    button[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
 </style>
+<div class="background-image"></div>
 
-
-<form method="POST" action="{% url 'comment' bid %}">
-
-    {% csrf_token %}
-    <input type="hidden" id="rating" name="rating" value="0">
-
-    <div class="form-group">
-        
-        <label for="rating">Star Rating:</label>
-        <div class="star-rating">
-            <span class="fa fa-star"></span>
-            <span class="fa fa-star"></span>
-            <span class="fa fa-star"></span>
-            <span class="fa fa-star"></span>
-            <span class="fa fa-star"></span>
+<div style="opacity: 0.8; background-color: aliceblue; " class="form-container content">
+    {% if message %}
+    <h3 class="text-center text-success">
+        {{message}}!
+    </h3>
+    {% else %}
+    <h2 style="color:#0056b3">Feedback Form</h2>
+    <form method="POST" action="{% url 'comment' bid %}">
+        {% csrf_token %}
+        <input type="hidden" id="rating" name="rating" value="5"> {# Set the default value to 5 #}
+        <div class="form-group">
+            <label style="color:#0056b3" for="rating">Star Rating:</label>
+            <div class="star-rating">
+                <span class="fa fa-star checked"></span> {# Add the 'checked' class to all stars #}
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+            </div>
         </div>
-    </div>
+        <div class="form-group">
+            <label style="color:#0056b3" for="comment">Comment:</label>
+            <textarea id="comment" name="comment" class="form-control" rows="5"></textarea>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
 
-    <div class="form-group">
-        <label for="comment">Comment:</label>
-        <textarea id="comment" name="comment" class="form-control" rows="5"></textarea>
-    </div>
+    <script>
+        const stars = document.querySelectorAll('.fa-star');
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        // Update the display of the stars
+        stars.forEach((star, index) => {
+            star.classList.add('checked');
+        });
 
-<script>
-    const stars = document.querySelectorAll('.fa-star');
+        // Add an event listener to each star
+        stars.forEach((star, index) => {
+            star.addEventListener('click', () => {
+                // Update the value of the hidden input field
+                document.querySelector('#rating').value = index + 1;
 
-    // Add an event listener to each star
-    stars.forEach((star, index) => {
-        star.addEventListener('click', () => {
-            // Update the value of the hidden input field
-            document.querySelector('#rating').value = index + 1;
-
-            // Update the display of the stars
-            stars.forEach((star, i) => {
-                if (i <= index) {
-                    star.classList.add('checked');
-                } else {
-                    star.classList.remove('checked');
-                }
+                // Update the display of the stars
+                stars.forEach((star, i) => {
+                    if (i <= index) {
+                        star.classList.add('checked');
+                    } else {
+                        star.classList.remove('checked');
+                    }
+                });
             });
         });
-    });
-</script>
-{% endif %}
-
-
-
-
-
-
+    </script>
+    {% endif %}
+</div>
 
 {% endblock %}

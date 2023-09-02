@@ -5,6 +5,23 @@
 {% load my_filters %}
 
 <style>
+    .background-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1481277542470-605612bd2d61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2212&q=80');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.5;
+        z-index: 1;
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+    }
     .service-table {
         width: 100%;
         border-collapse: collapse;
@@ -59,18 +76,24 @@
         font-size: 20px;
         color: #ffcc00;
     }
+    .hidden {
+        display: none;
+    }
 </style>
 
-<table class="service-table">
+<div class="background-image"></div>
+<div class="content">
+<table class="service-table ">
     {% if comments %}
-    <th colspan="3" style="text-align:center; margin-bottom: 40px; color: black;background-color: #ddd;">{{item}}</th>
-    <tr>
+    <div style="text-align:center; margin-bottom: 40px; color: rgb(58, 10, 179); font-weight: bold; font-size:18px;">
+        <span style="text-decoration: underline;">{{item}}</span> ({{comments|length}} Review's' Found)
+    </div>
         <th>User</th>
         <th>Rating(Out of 5)</th>
         <th>Comments</th>
     </tr>
     {% for comment in comments %}
-    <tr>
+    <tr class="comment-row {% if forloop.counter > 5 %}hidden{% endif %}">
         <td>{{comment.user.username}}</td>
         <td>
             <ul class="rating">
@@ -78,22 +101,25 @@
                 <li>★</li>
                 {% endfor %}
                 {% for i in comment.rate|to_five %}
-               
                 <li>☆</li>
-              
                 {% endfor %}
-                
-              
-
             </ul>
         </td>
-
         <td>{{comment.comment}}</td>
     </tr>
-    {% endfor %}
+{% endfor %}
+{% if comments|length > 5 %}
+<tr>
+    <td colspan="3">
+        <button id="show-more-button">Read more Comments</button>
+        <button id="show-less-button" class="hidden">Read less</button>
+    </td>
+</tr>
+{% endif %}
+
     {% else %}
     <tr>
-        <td colspan="3" style="text-align:center;">No comments for this Service Provider</td>
+        <td colspan="3" style="text-align:center;">No Reviews for this Service Provider</td>
     </tr>
     {% endif %}
 </table>
@@ -102,7 +128,8 @@
     {% if messages %}
     {% for message in messages %}
     {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-    <div class="warning-message">{{ message }}</div>
+    
+    <div style="font-size: 20px;" class="warning-message">{{ message }}</div>
     {% else %}
     <div class="success-message">{{ message }}</div>
     {% endif %}
@@ -122,7 +149,26 @@
     </div>
 </form>
 
+</div>
+<script>
+    document.getElementById('show-more-button').onclick = function() {
+        var hiddenRows = document.querySelectorAll('.comment-row.hidden');
+        for (var i = 0; i < hiddenRows.length; i++) {
+            hiddenRows[i].classList.remove('hidden');
+        }
+        this.classList.add('hidden');
+        document.getElementById('show-less-button').classList.remove('hidden');
+    }
 
+    document.getElementById('show-less-button').onclick = function() {
+        var shownRows = document.querySelectorAll('.comment-row:not(.hidden)');
+        for (var i = 5; i < shownRows.length; i++) {
+            shownRows[i].classList.add('hidden');
+        }
+        this.classList.add('hidden');
+        document.getElementById('show-more-button').classList.remove('hidden');
+    }
+</script>
 
 
 

@@ -1,3 +1,4 @@
+
 {% extends "login/layout.html" %}
 
 {% block body %}
@@ -12,35 +13,110 @@
         
         
     } */
-    button{
+    
+    .layout-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .background-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2338&q=80');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.4;
+        z-index: 1;
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+        
+    }
+
+
+
+
+    button {
         border: 0;
         background-color: #4284f3;
         color: white;
         margin: 20px 30px;
-        
+
         border: 2px solid #3498db;
         padding: 14px 10px;
         width: 200px;
         outline: none;
-        
+
         border-radius: 24px;
         transition: 0.25s;
-}
-button:hover{
-    background-color: rgba(0, 0, 139, 0.796); /* Green */
-    color: white;
-}
+    }
 
+    button:hover {
+        background-color: rgba(0, 0, 139, 0.796);
+        /* Green */
+        color: white;
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 2.2em;
+        margin-top: 50px;
+        color: #136288;
+        font-weight: 600;
+
+    }
+
+    p {
+
+        font-size: 1.2em;
+        text-align: center;
+        color: #136288;
+    }
+
+    .logo {
+        display: block;
+        margin: 0 auto;
+        width: 400px;
+        height: auto;
+    }
+
+    .services {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 50px;
+
+    }
 </style>
-{% if user.is_authenticated %}
-{% for category in services %}
-<form style="display: inline;" action="{% url 'service' category.id %}" method="POST">
-    {% csrf_token %}
-        <button  name="id" value={{category.id}} >{{category.name}} </option>
-</form>
-{% endfor %}
-{% endif %}
 
+{% if user.is_authenticated %}
+
+<div class="background-image"></div>
+<img style=" z-index: 1; " class="logo"
+    src="https://static.vecteezy.com/system/resources/previews/010/367/785/original/home-service-logo-for-any-business-especially-for-home-service-reapairment-home-care-etc-vector.jpg"
+    alt="Logo">
+    
+<div class="content">
+    <h2>Expert Professional Home Services</h2>
+    <p>Book Online and Get the Best Services at Your Doorstep</p>
+
+    <div class="services">
+        <div style="width: 50%;">
+            {% for category in services %}
+            <form style="display: inline;" action="{% url 'service' category.id %}" method="POST">
+                {% csrf_token %}
+                <button name="id" value={{category.id}}>{{category.name}}</button>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
 
 
 {% endblock %}
